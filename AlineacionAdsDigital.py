@@ -44,7 +44,7 @@ def get_private_key():
 
 # CONEXIÓN
 
-def get_connection(role="PRD_LECTURA"):
+def get_connection(role=None):
 
     conn = snowflake.connector.connect(
         user=SNOWFLAKE_CONFIG["user"],
@@ -52,7 +52,7 @@ def get_connection(role="PRD_LECTURA"):
         warehouse=SNOWFLAKE_CONFIG["warehouse"],
         database=SNOWFLAKE_CONFIG["database"],
         schema=SNOWFLAKE_CONFIG["schema"],
-        role=role,
+        role=SNOWFLAKE_CONFIG["role"],
         private_key=get_private_key()
     )
 
@@ -89,7 +89,7 @@ def obtener_campanas_historicas():
 
     query = """
     SELECT DISTINCT DES_CAMPANA
-    FROM DEV_STG.GNM_MEX.MKT_DIM_ADS_DIGITAL_FLE
+    FROM PRD_STG.GNM_MEX.MKT_DIM_ADS_DIGITAL_FLE
     WHERE DES_CAMPANA IS NOT NULL
     AND TRIM(DES_CAMPANA) <> ''
     ORDER BY DES_CAMPANA
@@ -117,7 +117,7 @@ def obtener_ads_pendientes():
         ,DES_PRODUCTO_BASE
         ,DES_AGRUPACION_PAUTA
         ,DES_MARCA
-    FROM DEV_STG.GNM_MEX.MKT_DIM_ADS_DIGITAL_FLE
+    FROM PRD_STG.GNM_MEX.MKT_DIM_ADS_DIGITAL_FLE
     WHERE
         DES_CAMPANA IS NULL
         OR TRIM(DES_CAMPANA) = ''
@@ -144,7 +144,7 @@ def validar_texto(texto):
 
 def actualizar_registros(df_actualizar, usuario):
 
-    conn = get_connection(role="PRD_LECTURA")
+    conn = get_connection()
 
     cursor = conn.cursor()
 
@@ -153,7 +153,7 @@ def actualizar_registros(df_actualizar, usuario):
         for _, row in df_actualizar.iterrows():
 
             query_update = """
-            UPDATE DEV_STG.GNM_MEX.MKT_DIM_ADS_DIGITAL_FLE
+            UPDATE PRD_STG.GNM_MEX.MKT_DIM_ADS_DIGITAL_FLE
             SET
                  DES_CAMPANA = %s
                 ,DES_ANUNCIO_LIMPIO = %s
