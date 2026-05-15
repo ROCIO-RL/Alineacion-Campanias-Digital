@@ -68,11 +68,9 @@ def obtener_catalogo_productos():
     query = """
     SELECT DISTINCT
          epc.PRONOMBRE AS PRODUCTO_BASE,
-         epc.AGRUPACION_PAUTA,
+         epc.AGPPAUTANOMBRE AS AGRUPACION_PAUTA,
          epc.MRCNOMBRE AS MARCA
-    FROM PRD_STG.GNM_CT.PRO_PRODUCTOS_CORP_GNM epc
-    WHERE epc.PAISID = 1
-    AND epc.PRONOMBRE IS NOT NULL
+    FROM PRD_CNS_MX.DM.DIM_PRODUCTO epc
     ORDER BY PRODUCTO_BASE
     """
 
